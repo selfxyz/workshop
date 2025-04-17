@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { countries, getUniversalLink } from "@selfxyz/core";
-import SelfQRcodeWrapper, { SelfAppBuilder } from "@selfxyz/qrcode";
+import SelfQRcodeWrapper, {
+  SelfAppBuilder,
+  type SelfApp,
+} from "@selfxyz/qrcode";
 import { v4 } from "uuid";
 
 export default function Home() {
@@ -11,30 +14,40 @@ export default function Home() {
   const [linkCopied, setLinkCopied] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-
-  const userId = v4();
+  const [selfApp, setSelfApp] = useState<SelfApp | null>(null);
+  const [universalLink, setUniversalLink] = useState("");
 
   const minimumAge = 20;
-  const excludedCountries = [countries.FRANCE];
+  // Use useMemo to cache the array to avoid creating a new array on each render
+  const excludedCountries = useMemo(() => [countries.FRANCE], []);
   const requireName = true;
   const checkOFAC = true;
 
-  const selfApp = new SelfAppBuilder({
-    appName: process.env.NEXT_PUBLIC_SELF_APP_NAME || "Self Workshop",
-    scope: process.env.NEXT_PUBLIC_SELF_SCOPE || "self-workshop",
-    endpoint: `${process.env.NEXT_PUBLIC_SELF_ENDPOINT}/api/verify/`,
-    logoBase64:
-      "https://pluspng.com/img-png/images-owls-png-hd-owl-free-download-png-png-image-485.png",
-    userId: userId,
-    disclosures: {
-      minimumAge,
-      ofac: checkOFAC,
-      excludedCountries,
-      name: requireName,
-    },
-  }).build();
+  // Use useEffect to ensure code only executes on the client side
+  useEffect(() => {
+    try {
+      const userId = v4();
+      const app = new SelfAppBuilder({
+        appName: process.env.NEXT_PUBLIC_SELF_APP_NAME || "Self Workshop",
+        scope: process.env.NEXT_PUBLIC_SELF_SCOPE || "self-workshop",
+        endpoint: `${process.env.NEXT_PUBLIC_SELF_ENDPOINT}/api/verify/`,
+        logoBase64:
+          "https://pluspng.com/img-png/images-owls-png-hd-owl-free-download-png-png-image-485.png",
+        userId: userId,
+        disclosures: {
+          minimumAge,
+          ofac: checkOFAC,
+          excludedCountries,
+          name: requireName,
+        },
+      }).build();
 
-  const universalLink = getUniversalLink(selfApp);
+      setSelfApp(app);
+      setUniversalLink(getUniversalLink(app));
+    } catch (error) {
+      console.error("Failed to initialize Self app:", error);
+    }
+  }, []);
 
   const displayToast = (message: string) => {
     setToastMessage(message);
@@ -43,6 +56,8 @@ export default function Home() {
   };
 
   const copyToClipboard = () => {
+    if (!universalLink) return;
+
     navigator.clipboard
       .writeText(universalLink)
       .then(() => {
@@ -57,6 +72,8 @@ export default function Home() {
   };
 
   const openSelfApp = () => {
+    if (!universalLink) return;
+
     window.open(universalLink, "_blank");
     displayToast("Opening Self App...");
   };
@@ -83,17 +100,24 @@ export default function Home() {
       {/* Main content */}
       <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto">
         <div className="flex justify-center mb-4 sm:mb-6">
-          <SelfQRcodeWrapper
-            selfApp={selfApp}
-            onSuccess={handleSuccessfulVerification}
-          />
+          {selfApp ? (
+            <SelfQRcodeWrapper
+              selfApp={selfApp}
+              onSuccess={handleSuccessfulVerification}
+            />
+          ) : (
+            <div className="w-[256px] h-[256px] bg-gray-200 animate-pulse flex items-center justify-center">
+              <p className="text-gray-500 text-sm">Loading QR Code...</p>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col sm:flex-row gap-2 sm:space-x-2 mb-4 sm:mb-6">
           <button
             type="button"
             onClick={copyToClipboard}
-            className="flex-1 bg-gray-800 hover:bg-gray-700 transition-colors text-white p-2 rounded-md text-sm sm:text-base"
+            disabled={!universalLink}
+            className="flex-1 bg-gray-800 hover:bg-gray-700 transition-colors text-white p-2 rounded-md text-sm sm:text-base disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             {linkCopied ? "Copied!" : "Copy Universal Link"}
           </button>
@@ -101,7 +125,8 @@ export default function Home() {
           <button
             type="button"
             onClick={openSelfApp}
-            className="flex-1 bg-blue-600 hover:bg-blue-500 transition-colors text-white p-2 rounded-md text-sm sm:text-base mt-2 sm:mt-0"
+            disabled={!universalLink}
+            className="flex-1 bg-blue-600 hover:bg-blue-500 transition-colors text-white p-2 rounded-md text-sm sm:text-base mt-2 sm:mt-0 disabled:bg-blue-300 disabled:cursor-not-allowed"
           >
             Open Self App
           </button>
@@ -129,8 +154,7 @@ export default function Home() {
                 />
               </svg>
               <span>
-                Minimum Age:{" "}
-                <span className="font-medium ml-1">{minimumAge}+ years</span>
+                Minimum Age: <span className="font-medium ml-1">20+ years</span>
               </span>
             </li>
             <li className="flex items-center">
@@ -150,9 +174,7 @@ export default function Home() {
               </svg>
               <span>
                 Name Verification:{" "}
-                <span className="font-medium ml-1">
-                  {requireName ? "Required" : "Not Required"}
-                </span>
+                <span className="font-medium ml-1">Required</span>
               </span>
             </li>
             <li className="flex items-center">
@@ -172,9 +194,7 @@ export default function Home() {
               </svg>
               <span>
                 OFAC Compliance:{" "}
-                <span className="font-medium ml-1">
-                  {checkOFAC ? "Enabled" : "Disabled"}
-                </span>
+                <span className="font-medium ml-1">Enabled</span>
               </span>
             </li>
             <li className="flex items-start">
@@ -198,11 +218,6 @@ export default function Home() {
               </span>
             </li>
           </ul>
-        </div>
-
-        <div className="mt-4 text-xs text-gray-500 text-center">
-          User ID: {userId.substring(0, 8)}...
-          {userId.substring(userId.length - 4)}
         </div>
       </div>
 
