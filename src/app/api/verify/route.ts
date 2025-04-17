@@ -14,8 +14,8 @@ export async function POST(request: Request) {
         }
 
         const configuredVerifier = new SelfBackendVerifier(
-            'https://forno.celo.org',
-            "self-workshop",
+            process.env.NEXT_PUBLIC_CELO_RPC_URL || 'https://forno.celo.org',
+            process.env.NEXT_PUBLIC_SELF_SCOPE || "self-workshop",
             'uuid',
             true
         ).setMinimumAge(20).excludeCountries(countries.FRANCE);

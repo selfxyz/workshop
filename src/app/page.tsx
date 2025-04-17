@@ -9,8 +9,8 @@ export default function Home() {
   // const address = '0x0006F5B774959120029F3A687b188759914D89a0'
 
   const selfApp = new SelfAppBuilder({
-    appName: "Self Workshop",
-    scope: "self-workshop",
+    appName: process.env.NEXT_PUBLIC_SELF_APP_NAME || "Self Workshop",
+    scope: process.env.NEXT_PUBLIC_SELF_SCOPE || "self-workshop",
     endpoint: `${process.env.NEXT_PUBLIC_SELF_ENDPOINT}/api/verify/`,
     logoBase64: "https://pluspng.com/img-png/images-owls-png-hd-owl-free-download-png-png-image-485.png",
     // userIdType: 'hex',
