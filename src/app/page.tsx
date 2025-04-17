@@ -69,31 +69,31 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gray-50 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen w-full bg-gray-50 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
       {/* Header */}
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold mb-2 text-gray-800">
+      <div className="mb-6 md:mb-8 text-center">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-gray-800">
           {process.env.NEXT_PUBLIC_SELF_APP_NAME || "Self Workshop"}
         </h1>
-        <p className="text-gray-600">
+        <p className="text-sm sm:text-base text-gray-600 px-2">
           Scan QR code with Self Protocol App to verify your identity
         </p>
       </div>
 
       {/* Main content */}
-      <div className="bg-white rounded-xl shadow-lg p-6 max-w-md w-full">
-        <div className="flex justify-center mb-6">
+      <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto">
+        <div className="flex justify-center mb-4 sm:mb-6">
           <SelfQRcodeWrapper
             selfApp={selfApp}
             onSuccess={handleSuccessfulVerification}
           />
         </div>
 
-        <div className="flex space-x-2 mb-6">
+        <div className="flex flex-col sm:flex-row gap-2 sm:space-x-2 mb-4 sm:mb-6">
           <button
             type="button"
             onClick={copyToClipboard}
-            className="flex-1 bg-gray-800 hover:bg-gray-700 transition-colors text-white p-2 rounded-md"
+            className="flex-1 bg-gray-800 hover:bg-gray-700 transition-colors text-white p-2 rounded-md text-sm sm:text-base"
           >
             {linkCopied ? "Copied!" : "Copy Universal Link"}
           </button>
@@ -101,21 +101,21 @@ export default function Home() {
           <button
             type="button"
             onClick={openSelfApp}
-            className="flex-1 bg-blue-600 hover:bg-blue-500 transition-colors text-white p-2 rounded-md"
+            className="flex-1 bg-blue-600 hover:bg-blue-500 transition-colors text-white p-2 rounded-md text-sm sm:text-base mt-2 sm:mt-0"
           >
             Open Self App
           </button>
         </div>
 
         {/* Configuration Info */}
-        <div className="border-t border-gray-200 pt-4">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">
+        <div className="border-t border-gray-200 pt-3 sm:pt-4">
+          <h3 className="text-xs sm:text-sm font-medium text-gray-700 mb-2">
             Verification Requirements:
           </h3>
-          <ul className="text-sm text-gray-600 space-y-1">
+          <ul className="text-xs sm:text-sm text-gray-600 space-y-1">
             <li className="flex items-center">
               <svg
-                className="h-4 w-4 text-green-500 mr-2"
+                className="h-3 w-3 sm:h-4 sm:w-4 text-green-500 mr-2"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -135,7 +135,7 @@ export default function Home() {
             </li>
             <li className="flex items-center">
               <svg
-                className="h-4 w-4 text-green-500 mr-2"
+                className="h-3 w-3 sm:h-4 sm:w-4 text-green-500 mr-2"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -157,7 +157,7 @@ export default function Home() {
             </li>
             <li className="flex items-center">
               <svg
-                className="h-4 w-4 text-green-500 mr-2"
+                className="h-3 w-3 sm:h-4 sm:w-4 text-green-500 mr-2"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -179,7 +179,7 @@ export default function Home() {
             </li>
             <li className="flex items-start">
               <svg
-                className="h-4 w-4 text-red-500 mr-2 mt-0.5"
+                className="h-3 w-3 sm:h-4 sm:w-4 text-red-500 mr-2 mt-0.5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -208,7 +208,7 @@ export default function Home() {
 
       {/* Toast notification */}
       {showToast && (
-        <div className="fixed bottom-4 right-4 bg-gray-800 text-white py-2 px-4 rounded shadow-lg animate-fade-in">
+        <div className="fixed bottom-4 right-4 bg-gray-800 text-white py-2 px-4 rounded shadow-lg animate-fade-in text-sm">
           {toastMessage}
         </div>
       )}
