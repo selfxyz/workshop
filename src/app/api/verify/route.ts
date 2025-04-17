@@ -14,8 +14,8 @@ export async function POST(request: Request) {
 		}
 
 		const configuredVerifier = new SelfBackendVerifier(
-			process.env.NEXT_PUBLIC_CELO_RPC_URL || "https://forno.celo.org",
-			process.env.NEXT_PUBLIC_SELF_SCOPE || "self-workshop",
+			process.env.NEXT_PUBLIC_SELF_SCOPE as string,
+			process.env.NEXT_PUBLIC_SELF_ENDPOINT as string,
 			"uuid",
 			process.env.NEXT_PUBLIC_SELF_ENABLE_MOCK_PASSPORT === "true", // Enable mock passport based on env config
 		)
