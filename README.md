@@ -10,7 +10,7 @@ This project demonstrates integration with the [Self Protocol](https://selfproto
 
 ## Prerequisites
 
-- Node.js 18.x or higher
+- Node.js 20.x or higher
 - NPM or Yarn
 - Self Protocol App [iOS](https://apps.apple.com/us/app/self-zk/id6478563710) or [Android](https://play.google.com/store/apps/details?id=com.proofofpassportapp&pli=1) installed on your mobile device
 - A public endpoint for the verification callback (can use [ngrok](https://ngrok.com/) for local development)
