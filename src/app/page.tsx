@@ -35,6 +35,7 @@ export default function Home() {
         }}
       />
       <button
+        type="button"
         onClick={() => {
           window.alert(getUniversalLink(selfApp));
         }}
