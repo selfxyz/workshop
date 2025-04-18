@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Self Workshop
+
+This project demonstrates integration with the [Self Protocol](https://selfprotocol.org/) for identity verification in a Next.js application. Users can verify their identity using the Self mobile app by scanning a QR code.
+
+## Features
+
+- QR code generation for Self Protocol integration
+- Identity verification flow
+- Customizable identity verification parameters
+
+## Prerequisites
+
+- Node.js 20.x or higher
+- NPM or Yarn
+- Self Protocol App [iOS](https://apps.apple.com/us/app/self-zk/id6478563710) or [Android](https://play.google.com/store/apps/details?id=com.proofofpassportapp&pli=1) installed on your mobile device
+- A public endpoint for the verification callback (can use [ngrok](https://ngrok.com/) for local development)
+
+## Environment Setup
+
+1. Copy the `.env.example` file to `.env.local`:
+   ```bash
+   cp .env.example .env.local
+   ```
+
+2. Configure the environment variables:
+   - `NEXT_PUBLIC_SELF_ENDPOINT`: Set to your public endpoint (e.g., ngrok URL)
+   - `NEXT_PUBLIC_SELF_APP_NAME`: Your application name (default: "Self Workshop")
+   - `NEXT_PUBLIC_SELF_SCOPE`: Your application scope (default: "self-workshop")
+   - `NEXT_PUBLIC_CELO_RPC_URL`: The URL of the Celo network you want to use for verification (default: "https://forno.celo.org")
 
 ## Getting Started
 
-First, run the development server:
+1. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+2. Set up a public endpoint using ngrok (if developing locally):
+   ```bash
+   npx ngrok http 3000
+   ```
+   Copy the public URL and set it as `NEXT_PUBLIC_SELF_ENDPOINT` in your `.env.local` file.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Run the development server:
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## How It Works
 
-## Learn More
+1. When users visit the homepage, a unique QR code is generated using the Self Protocol.
+2. Users scan this QR code with their Self app.
+3. The Self app prompts users to share their identity information.
+4. After successful verification, users are redirected to the `/verified` page.
 
-To learn more about Next.js, take a look at the following resources:
+## Customization
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The application can be customized by modifying the following files:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `src/app/page.tsx`: Frontend Self Protocol integration
+  - Customize the identity requirements in the `disclosures` section
+  - Modify the success callback behavior
 
-## Deploy on Vercel
+- `src/app/api/verify/route.ts`: Backend verification handler
+  - Customize verification parameters
+  - Modify the response handling logic
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Additional Resources
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Self Protocol Documentation](https://docs.self.xyz/)
+- [Next.js Documentation](https://nextjs.org/docs)
