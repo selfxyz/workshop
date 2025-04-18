@@ -18,10 +18,13 @@ export async function POST(request: Request) {
     const { proof, publicSignals } = body;
 
     if (!proof || !publicSignals) {
-      return NextResponse.json(
-        { error: "Proof and publicSignals are required" },
-        { status: 400 }
-      );
+      // Return plain text error message
+      return new NextResponse("Proof and publicSignals are required", {
+        status: 400,
+        headers: {
+          'Content-Type': 'text/plain',
+        }
+      });
     }
 
     const configuredVerifier = new SelfBackendVerifier(
@@ -49,10 +52,12 @@ export async function POST(request: Request) {
     console.log("credentialSubject", result.credentialSubject);
 
     if (result.isValid) {
-      return NextResponse.json({
-        status: "success",
-        result: result.isValid,
-        credentialSubject: result.credentialSubject,
+      // Verification successful, return plain text success message
+      return new NextResponse("Verification successful", {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/plain',
+        }
       });
     }
 
@@ -60,19 +65,24 @@ export async function POST(request: Request) {
     const errorMessage = getAllErrorMessages(result);
     console.log("errorMessage", errorMessage);
 
-    return NextResponse.json(
-      {
-        error: errorMessage,
-      },
-      { status: 400 }
-    );
+    // Return plain text error message
+    return new NextResponse(errorMessage, {
+      status: 400,
+      headers: {
+        'Content-Type': 'text/plain',
+      }
+    });
   } catch (error) {
     console.error("Error verifying proof:", error);
-    return NextResponse.json(
+    // Return plain text error message
+    return new NextResponse(
+      error instanceof Error ? error.message : "Unknown error", 
       {
-        error: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 }
+        status: 500,
+        headers: {
+          'Content-Type': 'text/plain',
+        }
+      }
     );
   }
 }
