@@ -52,12 +52,10 @@ export async function POST(request: Request) {
     console.log("credentialSubject", result.credentialSubject);
 
     if (result.isValid) {
-      // Verification successful, return plain text success message
-      return new NextResponse("Verification successful", {
-        status: 200,
-        headers: {
-          'Content-Type': 'text/plain',
-        }
+      // Verification successful, return proper JSON response
+      return NextResponse.json({
+        status: "success",
+        result: result.isValid,
       });
     }
 
