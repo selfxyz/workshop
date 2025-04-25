@@ -17,7 +17,7 @@ export default function Home() {
   const [selfApp, setSelfApp] = useState<SelfApp | null>(null);
   const [universalLink, setUniversalLink] = useState("");
 
-  const minimumAge = 20;
+  const minimumAge = 30;
   // Use useMemo to cache the array to avoid creating a new array on each render
   const excludedCountries = useMemo(() => [countries.FRANCE], []);
   const requireName = true;
@@ -154,7 +154,7 @@ export default function Home() {
                 />
               </svg>
               <span>
-                Minimum Age: <span className="font-medium ml-1">20+ years</span>
+                Minimum Age: <span className="font-medium ml-1">{minimumAge}+ years</span>
               </span>
             </li>
             <li className="flex items-center">
