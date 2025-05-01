@@ -1,6 +1,6 @@
 # Self Workshop
 
-This project demonstrates integration with the [Self Protocol](https://selfprotocol.org/) for identity verification in a Next.js application. Users can verify their identity using the Self mobile app by scanning a QR code.
+This project demonstrates integration with the [Self Protocol](https://self.xyz/) for identity verification in a Next.js application. Users can verify their identity using the Self mobile app by scanning a QR code.
 
 ## Features
 
