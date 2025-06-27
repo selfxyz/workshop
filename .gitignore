@@ -38,3 +38,18 @@ next-env.d.ts
 .env
 
 bun.lockb
+
+# Hardhat files
+contracts/cache/
+contracts/artifacts/
+contracts/node_modules/
+
+# Hardhat ignores
+contracts/*.env
+contracts/coverage
+contracts/coverage.json
+contracts/typechain
+contracts/typechain-types
+
+# Deployment artifacts (optional - depends on if you want to track deployments)
+# contracts/deployments/
