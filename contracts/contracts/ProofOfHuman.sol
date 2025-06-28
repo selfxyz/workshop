@@ -1,187 +1,130 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.28;
+pragma solidity 0.8.28;
 
 import {SelfVerificationRoot} from "@selfxyz/contracts/contracts/abstract/SelfVerificationRoot.sol";
 import {ISelfVerificationRoot} from "@selfxyz/contracts/contracts/interfaces/ISelfVerificationRoot.sol";
-import {AttestationId} from "@selfxyz/contracts/contracts/constants/AttestationId.sol";
+import {SelfStructs} from "@selfxyz/contracts/contracts/libraries/SelfStructs.sol";
 
 /**
- * @title ProofOfHuman
- * @notice A simple contract to verify humanity using Self Protocol
- * @dev Extends SelfVerificationRoot to handle passport verification callbacks
+ * @title TestSelfVerificationRoot
+ * @notice Test implementation of SelfVerificationRoot for testing purposes
+ * @dev This contract provides a concrete implementation of the abstract SelfVerificationRoot
  */
 contract ProofOfHuman is SelfVerificationRoot {
-    // Mapping to track verified humans
-    mapping(address => bool) public verifiedHumans;
-    
-    // Mapping to track verification timestamps
-    mapping(address => uint256) public verificationTimestamp;
-    
-    // Mapping to store nationality if disclosed
-    mapping(address => string) public userNationality;
-    
-    // State variable for dynamic configId
-    bytes32 private _configId;
-    
-    // Events
-    event HumanVerified(address indexed user, uint256 timestamp, string nationality);
-    event VerificationAttempted(address indexed user);
-    
-    // Comprehensive event for all passport data (split to avoid stack too deep)
-    event PassportDataLogged(
-        address indexed user,
-        bytes32 attestationId,
-        uint256 userIdentifier,
-        uint256 nullifier,
-        string nationality,
-        string dateOfBirth,
-        uint256 olderThan
-    );
-    
-    event PassportDataExtended(
-        address indexed user,
-        uint256[4] forbiddenCountriesListPacked,
-        string issuingState,
-        string[] name,
-        string idNumber,
-        string gender,
-        string expiryDate,
-        bool[3] ofac
-    );
-    
-    event ScopeUpdated(uint256 oldScope, uint256 newScope);
-    event ConfigIdUpdated(bytes32 oldConfigId, bytes32 newConfigId);
+    // Storage for testing purposes
+    bool public verificationSuccessful;
+    ISelfVerificationRoot.GenericDiscloseOutputV2 public lastOutput;
+    bytes public lastUserData;
+    SelfStructs.VerificationConfigV2 public verificationConfig;
+    bytes32 public verificationConfigId;
 
-    constructor(address _identityVerificationHub) 
-        SelfVerificationRoot(_identityVerificationHub, 1) // scope = 1 for default
-    {
-        // Initialize default configId
-        _configId = keccak256("proof-of-human-default");
-    }
+    // Events for testing
+    event VerificationCompleted(
+        ISelfVerificationRoot.GenericDiscloseOutputV2 output,
+        bytes userData
+    );
 
     /**
-     * @notice Returns the configuration ID for verification
-     * @dev Uses a default config for all verifications
+     * @notice Constructor for the test contract
+     * @param identityVerificationHubV2Address The address of the Identity Verification Hub V2
      */
-    function getConfigId(
-        bytes32 destinationChainId,
-        bytes32 userIdentifier,
-        bytes memory userDefinedData
-    ) public view override returns (bytes32) {
-        // Return the configurable configId
-        return _configId;
+    constructor(
+        address identityVerificationHubV2Address,
+        uint256 scope,
+        bytes32 _verificationConfigId
+    ) SelfVerificationRoot(identityVerificationHubV2Address, scope) {
+        verificationConfigId = _verificationConfigId;
     }
 
     /**
-     * @notice Handles successful passport verification
-     * @dev Called by the hub after proof verification
+     * @notice Implementation of customVerificationHook for testing
+     * @dev This function is called by onVerificationSuccess after hub address validation
+     * @param output The verification output from the hub
+     * @param userData The user data passed through verification
      */
     function customVerificationHook(
         ISelfVerificationRoot.GenericDiscloseOutputV2 memory output,
         bytes memory userData
     ) internal override {
-        // Extract user address from userData
-        // userData format: | 32 bytes destChainId | 32 bytes userIdentifier | userDefinedData |
-        bytes32 userIdentifierBytes32;
-        if (userData.length >= 64) {
-            assembly {
-                userIdentifierBytes32 := mload(add(userData, 64)) // Skip 32 bytes destChainId, read userIdentifier
-            }
-        }
-        
-        address user = address(uint160(uint256(userIdentifierBytes32)));
-        
-        emit VerificationAttempted(user);
-        
-        // Mark user as verified human
-        verifiedHumans[user] = true;
-        verificationTimestamp[user] = block.timestamp;
-        
-        // Store nationality if disclosed
-        if (bytes(output.nationality).length > 0) {
-            userNationality[user] = output.nationality;
-        }
-        
-        emit HumanVerified(user, block.timestamp, output.nationality);
-        
-        // Emit comprehensive passport data events (split to avoid stack too deep)
-        emit PassportDataLogged(
-            user,
-            output.attestationId,
-            output.userIdentifier,
-            output.nullifier,
-            output.nationality,
-            output.dateOfBirth,
-            output.olderThan
-        );
-        
-        emit PassportDataExtended(
-            user,
-            output.forbiddenCountriesListPacked,
-            output.issuingState,
-            output.name,
-            output.idNumber,
-            output.gender,
-            output.expiryDate,
-            output.ofac
-        );
+        verificationSuccessful = true;
+        lastOutput = output;
+        lastUserData = userData;
+
+        emit VerificationCompleted(output, userData);
     }
 
     /**
-     * @notice Check if an address is a verified human
-     * @param user The address to check
-     * @return bool Whether the address is verified
+     * @notice Reset the test state
      */
-    function isVerifiedHuman(address user) external view returns (bool) {
-        return verifiedHumans[user];
+    function resetTestState() external {
+        verificationSuccessful = false;
+        lastOutput = ISelfVerificationRoot.GenericDiscloseOutputV2({
+            attestationId: bytes32(0),
+            userIdentifier: 0,
+            nullifier: 0,
+            forbiddenCountriesListPacked: [
+                uint256(0),
+                uint256(0),
+                uint256(0),
+                uint256(0)
+            ],
+            issuingState: "",
+            name: new string[](3),
+            idNumber: "",
+            nationality: "",
+            dateOfBirth: "",
+            gender: "",
+            expiryDate: "",
+            olderThan: 0,
+            ofac: [false, false, false]
+        });
+        lastUserData = "";
     }
 
     /**
-     * @notice Get verification details for a user
-     * @param user The address to check
-     * @return isVerified Whether the user is verified
-     * @return timestamp When the user was verified (0 if not verified)
-     * @return nationality The user's nationality (empty if not disclosed)
-     */
-    function getVerificationDetails(address user) external view returns (
-        bool isVerified,
-        uint256 timestamp,
-        string memory nationality
-    ) {
-        return (
-            verifiedHumans[user],
-            verificationTimestamp[user],
-            userNationality[user]
-        );
-    }
-    
-    /**
-     * @notice Set a new scope for verification
-     * @param newScope The new scope value
-     * @dev Only callable by contract owner/admin
+     * @notice Expose the internal _setScope function for testing
+     * @param newScope The new scope value to set
      */
     function setScope(uint256 newScope) external {
-        uint256 oldScope = scope();
         _setScope(newScope);
-        emit ScopeUpdated(oldScope, newScope);
     }
-    
-    /**
-     * @notice Set a new configId for verification
-     * @param newConfigId The new configId value
-     * @dev Only callable by contract owner/admin
-     */
-    function setConfigId(bytes32 newConfigId) external {
-        bytes32 oldConfigId = _configId;
-        _configId = newConfigId;
-        emit ConfigIdUpdated(oldConfigId, newConfigId);
+
+    function setVerificationConfig(
+        SelfStructs.VerificationConfigV2 memory config
+    ) external {
+        verificationConfig = config;
+        _identityVerificationHubV2.setVerificationConfigV2(verificationConfig);
     }
-    
+
+    function setVerificationConfigNoHub(
+        SelfStructs.VerificationConfigV2 memory config
+    ) external {
+        verificationConfig = config;
+    }
+
+    function setConfigId(bytes32 configId) external {
+        verificationConfigId = configId;
+    }
+
+    function getConfigId(
+        bytes32 destinationChainId,
+        bytes32 userIdentifier,
+        bytes memory userDefinedData
+    ) public view override returns (bytes32) {
+        return verificationConfigId;
+    }
+
     /**
-     * @notice Get the current configId
-     * @return The current configId
+     * @notice Test function to simulate calling onVerificationSuccess from hub
+     * @dev This function is only for testing purposes to verify access control
+     * @param output The verification output
+     * @param userData The user data
      */
-    function getCurrentConfigId() external view returns (bytes32) {
-        return _configId;
+    function testOnVerificationSuccess(
+        bytes memory output,
+        bytes memory userData
+    ) external {
+        // This should fail if called by anyone other than the hub
+        onVerificationSuccess(output, userData);
     }
 }

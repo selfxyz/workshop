@@ -18,6 +18,6 @@
     "hardhat": "^2.25.0"
   },
   "dependencies": {
-    "@selfxyz/contracts": "^1.0.7"
+    "@selfxyz/contracts": "^1.2.0"
   }
 }

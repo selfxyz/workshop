@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
         countries.NORTH_KOREA,
       ] as Country3LetterCode[],
       ofac: false,
+      minimumAge: 15,
     };
 
     const configStore = new DefaultConfigStore(disclosures_config);
@@ -36,7 +37,7 @@ export async function POST(req: NextRequest) {
       true,
       AllIds,
       configStore,
-      "uuid"
+      "hex",
     );
 
     const result = await selfBackendVerifier.verify(

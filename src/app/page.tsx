@@ -18,7 +18,7 @@ export default function Home() {
   const [toastMessage, setToastMessage] = useState("");
   const [selfApp, setSelfApp] = useState<SelfApp | null>(null);
   const [universalLink, setUniversalLink] = useState("");
-  const [userId, setUserId] = useState(ethers.ZeroAddress);
+  const [userId, setUserId] = useState("0x24BeD820426b06b43f7D2452825D603f959F9737");
   // Use useMemo to cache the array to avoid creating a new array on each render
   const excludedCountries = useMemo(() => [countries.NORTH_KOREA], []);
 
@@ -28,24 +28,26 @@ export default function Home() {
       const app = new SelfAppBuilder({
         appName: process.env.NEXT_PUBLIC_SELF_APP_NAME || "Self Workshop",
         scope: process.env.NEXT_PUBLIC_SELF_SCOPE || "self-workshop",
-        endpoint: `${process.env.NEXT_PUBLIC_SELF_ENDPOINT}/api/verify/`,
+        endpoint: '0x4B3c886B19C684B44D03DB61DEff39e006F23f0f', //`${process.env.NEXT_PUBLIC_SELF_ENDPOINT}/api/verify/`,
         logoBase64:
           "https://i.postimg.cc/mrmVf9hm/self.png",
         userId: userId,
-        endpointType: "staging_https",
+        endpointType: "staging_celo",
         userIdType: "hex",
-        userDefinedData: "additional data",
-        disclosures: {
-          ofac: false,
-          excludedCountries: [countries.NORTH_KOREA],
-          name: false,
-          issuing_state: false,
-          nationality: true,
-          date_of_birth: false,
-          passport_number: false,
-          gender: false,
-          expiry_date: false,
-        }
+        version: 2,
+        // userDefinedData: "additional data",
+        // disclosures: {
+        //   minimumAge: 15,
+        //   ofac: false,
+        //   excludedCountries: [countries.NORTH_KOREA],
+        //   name: false,
+        //   issuing_state: false,
+        //   nationality: false,
+        //   date_of_birth: false,
+        //   passport_number: false,
+        //   gender: false,
+        //   expiry_date: false,
+        // }
       }).build();
 
       setSelfApp(app);
