@@ -22,11 +22,9 @@ export async function POST(req: NextRequest) {
     }
 
     const disclosures_config: VerificationConfig = {
-      excludedCountries: [
-        countries.NORTH_KOREA,
-      ] as Country3LetterCode[],
+      excludedCountries: [],
       ofac: false,
-      minimumAge: 15,
+      olderThan: 15,
     };
 
     const configStore = new DefaultConfigStore(disclosures_config);

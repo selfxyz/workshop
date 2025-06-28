@@ -33,7 +33,7 @@ export default function Home() {
         logoBase64:
           "https://i.postimg.cc/mrmVf9hm/self.png", // url of a png image, base64 is accepted but not recommended
         userId: userId,
-        endpointType: "staging_celo",
+        endpointType: "staging_https",
         userIdType: "hex", // use 'hex' for ethereum address or 'uuid' for uuidv4
         userDefinedData: "0x00",
         // disclosures: {
