@@ -5,7 +5,8 @@
   "scripts": {
     "test": "hardhat test",
     "compile": "hardhat compile",
-    "deploy": "hardhat run scripts/deploy.js --network alfajores"
+    "deploy": "hardhat run scripts/deploy.js --network alfajores",
+    "set:scope": "hardhat run scripts/set_scope.js --network alfajores"
   },
   "keywords": [],
   "author": "",
