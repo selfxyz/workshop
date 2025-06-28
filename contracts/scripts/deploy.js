@@ -63,8 +63,8 @@ async function main() {
   console.log("\nDeployment complete!");
   console.log("Contract address:", contractAddress);
   console.log("\nNext steps:");
-  console.log("1. Update NEXT_PUBLIC_PROOF_OF_HUMAN_CONTRACT in frontend/.env.local");
-  console.log("2. Update the frontend to use this contract address");
+  console.log("1. Update NEXT_PUBLIC_SELF_ENDPOINT in app/.env");
+  console.log("2. Go to https://tools.self.xyz, generate the scope and update it in your contract");
 }
 
 main()

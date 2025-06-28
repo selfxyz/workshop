@@ -17,6 +17,7 @@ contract ProofOfHuman is SelfVerificationRoot {
     bytes public lastUserData;
     SelfStructs.VerificationConfigV2 public verificationConfig;
     bytes32 public verificationConfigId;
+    address public lastUserAddress;
 
     // Events for testing
     event VerificationCompleted(
@@ -35,7 +36,6 @@ contract ProofOfHuman is SelfVerificationRoot {
     ) SelfVerificationRoot(identityVerificationHubV2Address, scope) {
         verificationConfigId = _verificationConfigId;
     }
-
     /**
      * @notice Implementation of customVerificationHook for testing
      * @dev This function is called by onVerificationSuccess after hub address validation
@@ -49,6 +49,7 @@ contract ProofOfHuman is SelfVerificationRoot {
         verificationSuccessful = true;
         lastOutput = output;
         lastUserData = userData;
+        lastUserAddress = address(uint160(output.userIdentifier));
 
         emit VerificationCompleted(output, userData);
     }
@@ -79,6 +80,7 @@ contract ProofOfHuman is SelfVerificationRoot {
             ofac: [false, false, false]
         });
         lastUserData = "";
+        lastUserAddress = address(0);
     }
 
     /**

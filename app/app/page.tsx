@@ -18,7 +18,7 @@ export default function Home() {
   const [toastMessage, setToastMessage] = useState("");
   const [selfApp, setSelfApp] = useState<SelfApp | null>(null);
   const [universalLink, setUniversalLink] = useState("");
-  const [userId, setUserId] = useState("0x24BeD820426b06b43f7D2452825D603f959F9737");
+  const [userId, setUserId] = useState(ethers.ZeroAddress);
   // Use useMemo to cache the array to avoid creating a new array on each render
   const excludedCountries = useMemo(() => [countries.NORTH_KOREA], []);
 
@@ -26,20 +26,24 @@ export default function Home() {
   useEffect(() => {
     try {
       const app = new SelfAppBuilder({
+        version: 2,
         appName: process.env.NEXT_PUBLIC_SELF_APP_NAME || "Self Workshop",
         scope: process.env.NEXT_PUBLIC_SELF_SCOPE || "self-workshop",
-        endpoint: '0x4B3c886B19C684B44D03DB61DEff39e006F23f0f', //`${process.env.NEXT_PUBLIC_SELF_ENDPOINT}/api/verify/`,
+        endpoint: `${process.env.NEXT_PUBLIC_SELF_ENDPOINT}`,
         logoBase64:
-          "https://i.postimg.cc/mrmVf9hm/self.png",
+          "https://i.postimg.cc/mrmVf9hm/self.png", // url of a png image, base64 is accepted but not recommended
         userId: userId,
         endpointType: "staging_celo",
-        userIdType: "hex",
-        version: 2,
-        // userDefinedData: "additional data",
+        userIdType: "hex", // use 'hex' for ethereum address or 'uuid' for uuidv4
+        userDefinedData: "0x00",
         // disclosures: {
+
+        // // what you want to verify from users' identity
         //   minimumAge: 15,
         //   ofac: false,
         //   excludedCountries: [countries.NORTH_KOREA],
+
+        // //what you want users to reveal
         //   name: false,
         //   issuing_state: false,
         //   nationality: false,
