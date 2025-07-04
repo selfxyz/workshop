@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     const disclosures_config: VerificationConfig = {
       excludedCountries: [],
       ofac: false,
-      olderThan: 15,
+      minimumAge: 18,
     };
 
     const configStore = new DefaultConfigStore(disclosures_config);
@@ -58,36 +58,12 @@ export async function POST(req: NextRequest) {
     )) as unknown as SelfAppDisclosureConfig;
 
     if (result.isValidDetails.isValid) {
-      const filteredSubject = { ...result.discloseOutput };
-
-      if (!saveOptions.issuing_state && filteredSubject) {
-        filteredSubject.issuingState = "Not disclosed";
-      }
-      if (!saveOptions.name && filteredSubject) {
-        filteredSubject.name = "Not disclosed";
-      }
-      if (!saveOptions.nationality && filteredSubject) {
-        filteredSubject.nationality = "Not disclosed";
-      }
-      if (!saveOptions.date_of_birth && filteredSubject) {
-        filteredSubject.dateOfBirth = "Not disclosed";
-      }
-      if (!saveOptions.passport_number && filteredSubject) {
-        filteredSubject.idNumber = "Not disclosed";
-      }
-      if (!saveOptions.gender && filteredSubject) {
-        filteredSubject.gender = "Not disclosed";
-      }
-      if (!saveOptions.expiry_date && filteredSubject) {
-        filteredSubject.expiryDate = "Not disclosed";
-      }
-
-      console.log(filteredSubject);
+      console.log(result.discloseOutput);
 
       return NextResponse.json({
         status: "success",
         result: result.isValidDetails.isValid,
-        credentialSubject: filteredSubject,
+        credentialSubject: result.discloseOutput,
         verificationOptions: {
           minimumAge: saveOptions.minimumAge,
           ofac: saveOptions.ofac,

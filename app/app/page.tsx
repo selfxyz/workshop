@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { countries, getUniversalLink } from "@selfxyz/core";
-import SelfQRcodeWrapper, {
+import {
+  SelfQRcodeWrapper,
   SelfAppBuilder,
   type SelfApp,
 } from "@selfxyz/qrcode";
@@ -35,23 +36,23 @@ export default function Home() {
         userId: userId,
         endpointType: "staging_https",
         userIdType: "hex", // use 'hex' for ethereum address or 'uuid' for uuidv4
-        userDefinedData: "0x00",
-        // disclosures: {
+        userDefinedData: "Bonjour Cannes!",
+        disclosures: {
 
         // // what you want to verify from users' identity
-        //   minimumAge: 15,
-        //   ofac: false,
-        //   excludedCountries: [countries.NORTH_KOREA],
+          minimumAge: 18,
+          // ofac: false,
+          // excludedCountries: [countries.BELGIUM],
 
         // //what you want users to reveal
-        //   name: false,
-        //   issuing_state: false,
-        //   nationality: false,
-        //   date_of_birth: false,
-        //   passport_number: false,
-        //   gender: false,
-        //   expiry_date: false,
-        // }
+          // name: false,
+          // issuing_state: true,
+          nationality: true,
+          // date_of_birth: true,
+          // passport_number: false,
+          gender: true,
+          // expiry_date: false,
+        }
       }).build();
 
       setSelfApp(app);
