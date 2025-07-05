@@ -26,7 +26,6 @@ export async function POST(req: NextRequest) {
       ofac: false,
       minimumAge: 18,
     };
-
     const configStore = new DefaultConfigStore(disclosures_config);
 
     const selfBackendVerifier = new SelfBackendVerifier(
@@ -58,7 +57,6 @@ export async function POST(req: NextRequest) {
     )) as unknown as SelfAppDisclosureConfig;
 
     if (result.isValidDetails.isValid) {
-      console.log(result.discloseOutput);
 
       return NextResponse.json({
         status: "success",
@@ -83,7 +81,7 @@ export async function POST(req: NextRequest) {
         result: result.isValidDetails.isValid,
         message: "Verification failed",
         details: result,
-      }, { status: 400 });
+      });
     }
   } catch (error) {
     console.error("Error verifying proof:", error);
@@ -91,6 +89,6 @@ export async function POST(req: NextRequest) {
       status: "error",
       result: false,
       message: error instanceof Error ? error.message : "Unknown error",
-    }, { status: 500 });
+    });
   }
 }
