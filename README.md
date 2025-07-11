@@ -270,7 +270,6 @@ self-workshop/
 - [Celo Documentation](https://docs.celo.org/)
 
 ### Community & Support
-- [Self Protocol Discord](https://discord.gg/selfprotocol)
 - [Workshop Issues](https://github.com/your-repo/issues)
 
 ### Related Projects
