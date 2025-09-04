@@ -1,23 +1,26 @@
 {
-  "name": "contracts",
+  "name": "proof-of-human-contracts",
+  "description": "Proof of Human Contracts using Self SDK",
   "version": "1.0.0",
-  "main": "hardhat.config.js",
-  "scripts": {
-    "test": "hardhat test",
-    "compile": "hardhat compile",
-    "deploy": "hardhat run scripts/deploy.js --network alfajores",
-    "set:scope": "hardhat run scripts/set_scope.js --network alfajores"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^6.0.0",
-    "dotenv": "^16.5.0",
-    "hardhat": "^2.25.0"
+    "prettier": "^3.5.3"
+  },
+  "private": true,
+  "scripts": {
+    "clean": "rm -rf cache out",
+    "build": "forge build",
+    "lint": "pnpm lint:sol && pnpm prettier:check",
+    "lint:sol": "forge fmt --check && pnpm solhint {script,src,test}/**/*.sol",
+    "prettier:check": "prettier --check **/*.{json,md,yml} --ignore-path=.prettierignore",
+    "prettier:write": "prettier --write **/*.{json,md,yml} --ignore-path=.prettierignore",
+    "test": "forge test",
+    "test:coverage": "forge coverage",
+    "test:coverage:report": "forge coverage --report lcov && genhtml lcov.info --branch-coverage --output-dir coverage"
   },
   "dependencies": {
-    "@selfxyz/contracts": "^1.2.0"
+    "@openzeppelin/contracts": "^5.3.0",
+    "@selfxyz/contracts": "^1.2.0",
+    "@selfxyz/core": "^0.0.25",
+    "solhint": "^5.1.0"
   }
 }
