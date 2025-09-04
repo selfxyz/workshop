@@ -19,9 +19,9 @@ export default function Home() {
   const [toastMessage, setToastMessage] = useState("");
   const [selfApp, setSelfApp] = useState<SelfApp | null>(null);
   const [universalLink, setUniversalLink] = useState("");
-  const [userId, setUserId] = useState(ethers.ZeroAddress);
+  const [userId] = useState(ethers.ZeroAddress);
   // Use useMemo to cache the array to avoid creating a new array on each render
-  const excludedCountries = useMemo(() => [countries.NORTH_KOREA], []);
+  const excludedCountries = useMemo(() => [countries.UNITED_STATES], []);
 
   // Use useEffect to ensure code only executes on the client side
   useEffect(() => {
@@ -34,17 +34,17 @@ export default function Home() {
         logoBase64:
           "https://i.postimg.cc/mrmVf9hm/self.png", // url of a png image, base64 is accepted but not recommended
         userId: userId,
-        endpointType: "staging_https",
+        endpointType: "staging_celo",
         userIdType: "hex", // use 'hex' for ethereum address or 'uuid' for uuidv4
-        userDefinedData: "Bonjour Cannes!",
+        userDefinedData: "Hello Taipei Blockchain Week and XueDAO",
         disclosures: {
 
-        // // what you want to verify from users' identity
+        // what you want to verify from users' identity
           minimumAge: 18,
-          // ofac: false,
-          // excludedCountries: [countries.BELGIUM],
+          // ofac: true,
+          // excludedCountries: excludedCountries,
 
-        // //what you want users to reveal
+        // what you want users to reveal
           // name: false,
           // issuing_state: true,
           nationality: true,
@@ -60,7 +60,7 @@ export default function Home() {
     } catch (error) {
       console.error("Failed to initialize Self app:", error);
     }
-  }, []);
+  }, [excludedCountries, userId]);
 
   const displayToast = (message: string) => {
     setToastMessage(message);
