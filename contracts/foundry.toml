@@ -11,6 +11,15 @@
   optimizer = true
   optimizer_runs = 10_000
   out = "out"
+  remappings = [
+    '@layerzerolabs/oapp-evm/contracts/=lib/LayerZero-v2/packages/layerzero-v2/evm/oapp/contracts/',
+    '@layerzerolabs/lz-evm-protocol-v2/contracts/=lib/LayerZero-v2/packages/layerzero-v2/evm/protocol/contracts/',
+    '@layerzerolabs/lz-evm-messagelib-v2/contracts/=lib/LayerZero-v2/packages/layerzero-v2/evm/messagelib/contracts/',
+    '@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/',
+    '@selfxyz/contracts/=node_modules/@selfxyz/contracts/',
+    'forge-std/=lib/forge-std/src/',
+    'solidity-bytes-utils/=lib/solidity-bytes-utils/',
+  ]
   script = "script"
   solc = "0.8.28"
   src = "src"
@@ -23,6 +32,8 @@
 [etherscan]
   celo = { key = "${CELOSCAN_API_KEY}", url = "https://api.celoscan.io/api", chain = 42220 }
   celo-sepolia = { key = "${CELOSCAN_API_KEY}", url = "https://celo-sepolia.blockscout.com/api", chain = 11142220 }
+  base = { key = "${BASESCAN_API_KEY}", url = "https://api.basescan.org/api", chain = 8453 }
+  base-sepolia = { key = "${BASESCAN_API_KEY}", url = "https://api-sepolia.basescan.org/api", chain = 84532 }
 
 [fmt]
   bracket_spacing = true
@@ -37,4 +48,6 @@
 [rpc_endpoints]
   celo = "https://forno.celo.org"
   celo-sepolia = "https://forno.celo-sepolia.celo-testnet.org"
+  base = "https://mainnet.base.org"
+  base-sepolia = "https://sepolia.base.org"
   localhost = "http://localhost:8545"
