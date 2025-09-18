@@ -28,8 +28,8 @@ cd ..
 
 # Install contract dependencies
 cd contracts
-npm install          # Install Self SDK packages
-forge install foundry-rs/forge-std --no-commit # Install Foundry libraries
+npm install        
+forge install foundry-rs/forge-std
 cd ..
 ```
 
