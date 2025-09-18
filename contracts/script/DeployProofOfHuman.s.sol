@@ -17,8 +17,6 @@ contract DeployProofOfHuman is BaseScript {
     /// @return proofOfHuman The deployed ProofOfHuman contract instance
     /// @dev Requires the following environment variables:
     ///      - IDENTITY_VERIFICATION_HUB_ADDRESS: Address of the Self Protocol verification hub
-    ///      - VERIFICATION_CONFIG_ID: The verification configuration ID (bytes32)
-    ///      Optional environment variables:
     ///      - PLACEHOLDER_SCOPE: Placeholder scope value (defaults to 1)
 
     function run() public broadcast returns (ProofOfHuman proofOfHuman) {

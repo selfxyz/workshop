@@ -191,8 +191,8 @@ if [ -n "$CELOSCAN_API_KEY" ]; then
         "celo-mainnet")
             CHAIN_NAME="celo"
             ;;
-        "celo-alfajores")
-            CHAIN_NAME="celo-alfajores"
+        "celo-sepolia")
+            CHAIN_NAME="celo-sepolia"
             ;;
     esac
     

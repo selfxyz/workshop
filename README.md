@@ -53,11 +53,8 @@ Edit `.env` with your values:
 # Your private key (with 0x prefix)
 PRIVATE_KEY=0xyour_private_key_here
 
-# From tools.self.xyz
-VERIFICATION_CONFIG_ID=0x1234...your_config_id
-
 # Network selection
-NETWORK=celo-alfajores
+NETWORK=celo-sepolia
 
 # Scope calculation
 SCOPE_SEED="self-workshop"
@@ -179,10 +176,10 @@ contract ProofOfHuman is SelfVerificationRoot {
 
 ### Network Configuration
 
-#### Celo Alfajores (Testnet)
-- **Hub Address**: `0x68c931C9a534D37aa78094877F46fE46a49F1A51`
-- **RPC**: `https://alfajores-forno.celo-testnet.org`
-- **Explorer**: `https://alfajores.celoscan.io`
+#### Celo Sepolia (Testnet)
+- **Hub Address**: `0x16ECBA51e18a4a7e61fdC417f0d47AFEeDfbed74`
+- **RPC**: `https://forno.celo-sepolia.celo-testnet.org`
+- **Explorer**: `https://celo-sepolia.blockscout.com/`
 - **Supports**: Mock passports for testing
 
 #### Celo Mainnet

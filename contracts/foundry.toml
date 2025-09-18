@@ -22,7 +22,7 @@
 
 [etherscan]
   celo = { key = "${CELOSCAN_API_KEY}", url = "https://api.celoscan.io/api", chain = 42220 }
-  celo-alfajores = { key = "${CELOSCAN_API_KEY}", url = "https://api-alfajores.celoscan.io/api", chain = 44787 }
+  celo-sepolia = { key = "${CELOSCAN_API_KEY}", url = "https://celo-sepolia.blockscout.com/api", chain = 11142220 }
 
 [fmt]
   bracket_spacing = true
@@ -36,5 +36,5 @@
 
 [rpc_endpoints]
   celo = "https://forno.celo.org"
-  celo-alfajores = "https://alfajores-forno.celo-testnet.org"
+  celo-sepolia = "https://forno.celo-sepolia.celo-testnet.org"
   localhost = "http://localhost:8545"
