@@ -4,6 +4,8 @@ pragma solidity 0.8.28;
 import {SelfVerificationRoot} from "@selfxyz/contracts/contracts/abstract/SelfVerificationRoot.sol";
 import {ISelfVerificationRoot} from "@selfxyz/contracts/contracts/interfaces/ISelfVerificationRoot.sol";
 import {SelfStructs} from "@selfxyz/contracts/contracts/libraries/SelfStructs.sol";
+import {SelfUtils} from "@selfxyz/contracts/contracts/libraries/SelfUtils.sol";
+import {IIdentityVerificationHubV2} from "@selfxyz/contracts/contracts/interfaces/IIdentityVerificationHubV2.sol";
 
 /**
  * @title TestSelfVerificationRoot
@@ -31,10 +33,11 @@ contract ProofOfHuman is SelfVerificationRoot {
      */
     constructor(
         address identityVerificationHubV2Address,
-        uint256 scope,
-        bytes32 _verificationConfigId
+        uint256 scope, 
+        SelfUtils.UnformattedVerificationConfigV2 memory _verificationConfig
     ) SelfVerificationRoot(identityVerificationHubV2Address, scope) {
-        verificationConfigId = _verificationConfigId;
+        verificationConfig = SelfUtils.formatVerificationConfigV2(_verificationConfig);
+        verificationConfigId = IIdentityVerificationHubV2(identityVerificationHubV2Address).setVerificationConfigV2(verificationConfig);
     }
     /**
      * @notice Implementation of customVerificationHook for testing

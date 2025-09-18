@@ -29,21 +29,11 @@ cd ..
 # Install contract dependencies
 cd contracts
 npm install          # Install Self SDK packages
-forge install        # Install Foundry libraries
+forge install foundry-rs/forge-std --no-commit # Install Foundry libraries
 cd ..
 ```
 
-### Step 2: Generate Verification Config
-
-Visit [tools.self.xyz](https://tools.self.xyz) to create verification config:
-
-1. Set age requirement (e.g., 18+)
-2. Choose excluded countries
-3. Select OFAC compliance level  
-4. **Deploy config** (use testnet mode - free gas)
-5. **Save the Config ID** (bytes32 format like `0x1234...`)
-
-### Step 3: Smart Contract Deployment
+### Step 2: Smart Contract Deployment
 
 Navigate to the contracts folder and configure deployment:
 
@@ -108,7 +98,7 @@ NEXT_PUBLIC_SELF_APP_NAME="Self Workshop"
 NEXT_PUBLIC_SELF_SCOPE="self-workshop"
 ```
 
-### Step 5: Start Development
+### Step 4: Start Development
 
 ```bash
 # Navigate to app directory and start the Next.js development server

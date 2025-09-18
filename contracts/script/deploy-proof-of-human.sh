@@ -30,7 +30,6 @@ source .env
 # Required environment variables
 REQUIRED_VARS=(
     "PRIVATE_KEY"
-    "VERIFICATION_CONFIG_ID"
 )
 
 # Check required variables
@@ -44,7 +43,7 @@ done
 
 # Set defaults for optional variables
 PLACEHOLDER_SCOPE=${PLACEHOLDER_SCOPE:-1}
-NETWORK=${NETWORK:-"celo-alfajores"}
+NETWORK=${NETWORK:-"celo-sepolia"}
 
 # Network configuration
 case "$NETWORK" in
@@ -55,15 +54,15 @@ case "$NETWORK" in
         CHAIN_ID="42220"
         BLOCK_EXPLORER_URL="https://celoscan.io"
         ;;
-    "celo-alfajores")
-        IDENTITY_VERIFICATION_HUB_ADDRESS=${IDENTITY_VERIFICATION_HUB_ADDRESS:-"0x68c931C9a534D37aa78094877F46fE46a49F1A51"}
-        RPC_URL="https://alfajores-forno.celo-testnet.org"
-        NETWORK_NAME="celo-alfajores"
-        CHAIN_ID="44787"
-        BLOCK_EXPLORER_URL="https://alfajores.celoscan.io"
+    "celo-sepolia")
+        IDENTITY_VERIFICATION_HUB_ADDRESS=${IDENTITY_VERIFICATION_HUB_ADDRESS:-"0x16ECBA51e18a4a7e61fdC417f0d47AFEeDfbed74"}
+        RPC_URL="https://forno.celo-sepolia.celo-testnet.org"
+        NETWORK_NAME="celo-sepolia"
+        CHAIN_ID="11142220"
+        BLOCK_EXPLORER_URL="https://celo-sepolia.blockscout.com"
         ;;
     *)
-        print_error "Unsupported network: $NETWORK. Use 'celo-mainnet' or 'celo-alfajores'"
+        print_error "Unsupported network: $NETWORK. Use 'celo-mainnet' or 'celo-sepolia'"
         exit 1
         ;;
 esac
@@ -89,7 +88,6 @@ validate_bytes32() {
 
 print_info "Validating input parameters..."
 validate_address "$IDENTITY_VERIFICATION_HUB_ADDRESS"
-validate_bytes32 "$VERIFICATION_CONFIG_ID"
 print_success "All inputs validated successfully"
 
 # Build contracts
@@ -199,10 +197,12 @@ if [ -n "$CELOSCAN_API_KEY" ]; then
     esac
     
     # Encode constructor arguments for verification
-    CONSTRUCTOR_ARGS=$(cast abi-encode "constructor(address,uint256,bytes32)" \
+    # Constructor: (address,uint256,(uint256,string[],bool))
+    # verificationConfig struct: {olderThan: 18, forbiddenCountries: ["USA"], ofacEnabled: false}
+    CONSTRUCTOR_ARGS=$(cast abi-encode "constructor(address,uint256,(uint256,string[],bool))" \
         $IDENTITY_VERIFICATION_HUB_ADDRESS \
         $PLACEHOLDER_SCOPE \
-        $VERIFICATION_CONFIG_ID)
+        "(18,[\"USA\"],false)")
     
     print_info "Constructor args: $CONSTRUCTOR_ARGS"
     
@@ -236,7 +236,7 @@ echo "| Hub Address | $IDENTITY_VERIFICATION_HUB_ADDRESS |"
 echo "| RPC URL | $RPC_URL |"
 echo "| Block Explorer | $BLOCK_EXPLORER_URL |"
 echo "| Placeholder Scope | $PLACEHOLDER_SCOPE |"
-echo "| Config ID | $VERIFICATION_CONFIG_ID |"
+echo "| Verification Config | olderThan: 18, forbiddenCountries: [USA], ofacEnabled: false |"
 if [ -n "$SCOPE_VALUE" ]; then
     echo "| Scope Value | $SCOPE_VALUE |"
 fi

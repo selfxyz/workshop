@@ -8,9 +8,7 @@ import {
   SelfAppBuilder,
   type SelfApp,
 } from "@selfxyz/qrcode";
-import { v4 } from "uuid";
 import { ethers } from "ethers";
-
 
 export default function Home() {
   const router = useRouter();
@@ -36,13 +34,12 @@ export default function Home() {
         userId: userId,
         endpointType: "staging_celo",
         userIdType: "hex", // use 'hex' for ethereum address or 'uuid' for uuidv4
-        userDefinedData: "Hello Taipei Blockchain Week and XueDAO",
+        userDefinedData: "Hello Eth Delhi!!!",
         disclosures: {
-
         // what you want to verify from users' identity
           minimumAge: 18,
           // ofac: true,
-          // excludedCountries: excludedCountries,
+          excludedCountries: excludedCountries,
 
         // what you want users to reveal
           // name: false,
