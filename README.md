@@ -30,7 +30,6 @@ cd ..
 cd contracts
 npm install        
 forge install foundry-rs/forge-std
-cd ..
 ```
 
 ### Step 2: Smart Contract Deployment
@@ -38,12 +37,6 @@ cd ..
 Navigate to the contracts folder and configure deployment:
 
 ```bash
-cd contracts
-
-# Install dependencies (if not done in Step 1)
-npm install          # Install Self SDK packages
-forge install        # Install Foundry libraries
-
 # Copy and configure environment
 cp .env.example .env
 ```
