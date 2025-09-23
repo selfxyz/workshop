@@ -23,6 +23,8 @@ contract DeployProofOfHuman is BaseScript {
         address hubAddress = vm.envAddress("IDENTITY_VERIFICATION_HUB_ADDRESS");
         uint256 placeholderScope = vm.envOr("PLACEHOLDER_SCOPE", uint256(1)); // Use placeholder scope
         string[] memory forbiddenCountries = new string[](1);
+        
+        // Make sure this is the same as frontend config
         forbiddenCountries[0] = CountryCodes.UNITED_STATES;
         SelfUtils.UnformattedVerificationConfigV2 memory verificationConfig = SelfUtils.UnformattedVerificationConfigV2({
             olderThan: 18,

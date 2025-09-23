@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.28;
 
-import {SelfVerificationRoot} from "@selfxyz/contracts/contracts/abstract/SelfVerificationRoot.sol";
-import {ISelfVerificationRoot} from "@selfxyz/contracts/contracts/interfaces/ISelfVerificationRoot.sol";
-import {SelfStructs} from "@selfxyz/contracts/contracts/libraries/SelfStructs.sol";
-import {SelfUtils} from "@selfxyz/contracts/contracts/libraries/SelfUtils.sol";
-import {IIdentityVerificationHubV2} from "@selfxyz/contracts/contracts/interfaces/IIdentityVerificationHubV2.sol";
+import { SelfVerificationRoot } from "@selfxyz/contracts/contracts/abstract/SelfVerificationRoot.sol";
+import { ISelfVerificationRoot } from "@selfxyz/contracts/contracts/interfaces/ISelfVerificationRoot.sol";
+import { SelfStructs } from "@selfxyz/contracts/contracts/libraries/SelfStructs.sol";
+import { SelfUtils } from "@selfxyz/contracts/contracts/libraries/SelfUtils.sol";
+import { IIdentityVerificationHubV2 } from "@selfxyz/contracts/contracts/interfaces/IIdentityVerificationHubV2.sol";
 
 /**
  * @title TestSelfVerificationRoot
@@ -22,10 +22,7 @@ contract ProofOfHuman is SelfVerificationRoot {
     address public lastUserAddress;
 
     // Events for testing
-    event VerificationCompleted(
-        ISelfVerificationRoot.GenericDiscloseOutputV2 output,
-        bytes userData
-    );
+    event VerificationCompleted(ISelfVerificationRoot.GenericDiscloseOutputV2 output, bytes userData);
 
     /**
      * @notice Constructor for the test contract
@@ -33,11 +30,14 @@ contract ProofOfHuman is SelfVerificationRoot {
      */
     constructor(
         address identityVerificationHubV2Address,
-        uint256 scope, 
+        uint256 scope,
         SelfUtils.UnformattedVerificationConfigV2 memory _verificationConfig
-    ) SelfVerificationRoot(identityVerificationHubV2Address, scope) {
+    )
+        SelfVerificationRoot(identityVerificationHubV2Address, scope)
+    {
         verificationConfig = SelfUtils.formatVerificationConfigV2(_verificationConfig);
-        verificationConfigId = IIdentityVerificationHubV2(identityVerificationHubV2Address).setVerificationConfigV2(verificationConfig);
+        verificationConfigId =
+            IIdentityVerificationHubV2(identityVerificationHubV2Address).setVerificationConfigV2(verificationConfig);
     }
     /**
      * @notice Implementation of customVerificationHook for testing
@@ -45,10 +45,14 @@ contract ProofOfHuman is SelfVerificationRoot {
      * @param output The verification output from the hub
      * @param userData The user data passed through verification
      */
+
     function customVerificationHook(
         ISelfVerificationRoot.GenericDiscloseOutputV2 memory output,
         bytes memory userData
-    ) internal override {
+    )
+        internal
+        override
+    {
         verificationSuccessful = true;
         lastOutput = output;
         lastUserData = userData;
@@ -70,11 +74,15 @@ contract ProofOfHuman is SelfVerificationRoot {
     }
 
     function getConfigId(
-        bytes32 /* destinationChainId */,
-        bytes32 /* userIdentifier */,
+        bytes32, /* destinationChainId */
+        bytes32, /* userIdentifier */
         bytes memory /* userDefinedData */
-    ) public view override returns (bytes32) {
+    )
+        public
+        view
+        override
+        returns (bytes32)
+    {
         return verificationConfigId;
     }
-
 }
