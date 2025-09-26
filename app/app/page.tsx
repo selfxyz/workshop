@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { countries, getUniversalLink } from "@selfxyz/core";
 import {
   SelfQRcodeWrapper,
   SelfAppBuilder,
   type SelfApp,
+  countries, 
+  getUniversalLink,
 } from "@selfxyz/qrcode";
 import { ethers } from "ethers";
 
@@ -40,14 +41,13 @@ export default function Home() {
           minimumAge: 18,
           // ofac: true,
           excludedCountries: excludedCountries,
-
-        // what you want users to reveal
+          // what you want users to reveal
           // name: false,
           // issuing_state: true,
-          nationality: true,
+          // nationality: true,
           // date_of_birth: true,
           // passport_number: false,
-          gender: true,
+          // gender: true,
           // expiry_date: false,
         }
       }).build();

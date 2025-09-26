@@ -137,51 +137,6 @@ else
     exit 1
 fi
 
-# Calculate and set scope if SCOPE_SEED is provided
-if [ -n "$SCOPE_SEED" ]; then
-    print_info "Calculating actual scope using deployed address..."
-    
-    # Convert address to checksum format for consistent scope calculation
-    # Address format affects scope calculation, so we need to ensure consistency
-    CONTRACT_ADDRESS_CHECKSUM=$(node -e "
-      const ethers = require('ethers');
-      try {
-        console.log(ethers.utils.getAddress('$CONTRACT_ADDRESS'));
-      } catch (error) {
-        console.error('Error converting address to checksum:', error.message);
-        process.exit(1);
-      }
-    ")
-    
-    # Use Node.js to calculate scope with @selfxyz/core hashEndpointWithScope function
-    # This matches the calculation used by tools.self.xyz
-    SCOPE_VALUE=$(node -e "
-      const { hashEndpointWithScope } = require('@selfxyz/core');
-      try {
-        const hash = hashEndpointWithScope('$CONTRACT_ADDRESS_CHECKSUM', '$SCOPE_SEED');
-        console.log(hash);
-      } catch (error) {
-        console.error('Error calculating scope:', error.message);
-        process.exit(1);
-      }
-    ")
-    
-    print_success "Calculated scope value: $SCOPE_VALUE"
-    
-    # Call setScope function on the deployed contract
-    print_info "Setting scope value on deployed contract..."
-    cast send $CONTRACT_ADDRESS "setScope(uint256)" $SCOPE_VALUE --rpc-url $RPC_URL --private-key $PRIVATE_KEY
-    
-    if [ $? -eq 0 ]; then
-        print_success "Scope value set successfully!"
-    else
-        print_warning "Failed to call setScope automatically. Manual step required:"
-        print_info "Call setScope($SCOPE_VALUE) on contract $CONTRACT_ADDRESS"
-    fi
-else
-    print_warning "SCOPE_SEED not provided, skipping scope calculation and setting"
-fi
-
 # Verify contract if API key is provided
 if [ -n "$CELOSCAN_API_KEY" ]; then
     print_info "Verifying contract on CeloScan..."

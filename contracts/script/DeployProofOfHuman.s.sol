@@ -21,7 +21,6 @@ contract DeployProofOfHuman is BaseScript {
 
     function run() public broadcast returns (ProofOfHuman proofOfHuman) {
         address hubAddress = vm.envAddress("IDENTITY_VERIFICATION_HUB_ADDRESS");
-        uint256 placeholderScope = vm.envOr("PLACEHOLDER_SCOPE", uint256(1)); // Use placeholder scope
         string[] memory forbiddenCountries = new string[](1);
         
         // Make sure this is the same as frontend config
@@ -33,12 +32,12 @@ contract DeployProofOfHuman is BaseScript {
         });
 
         // Deploy the contract using standard deployment with placeholder scope
-        proofOfHuman = new ProofOfHuman(hubAddress, placeholderScope, verificationConfig);
+        proofOfHuman = new ProofOfHuman(hubAddress, "test-scope", verificationConfig);
 
         // Log deployment information
         console.log("ProofOfHuman deployed to:", address(proofOfHuman));
         console.log("Identity Verification Hub:", hubAddress);
-        console.log("Placeholder Scope Value:", placeholderScope);
+        console.log("Scope Value:", proofOfHuman.scope());
 
         // Verify deployment was successful
         if (address(proofOfHuman) == address(0)) revert DeploymentFailed();

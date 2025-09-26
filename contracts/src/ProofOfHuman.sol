@@ -30,7 +30,7 @@ contract ProofOfHuman is SelfVerificationRoot {
      */
     constructor(
         address identityVerificationHubV2Address,
-        uint256 scope,
+        string memory scope, 
         SelfUtils.UnformattedVerificationConfigV2 memory _verificationConfig
     )
         SelfVerificationRoot(identityVerificationHubV2Address, scope)
@@ -39,6 +39,7 @@ contract ProofOfHuman is SelfVerificationRoot {
         verificationConfigId =
             IIdentityVerificationHubV2(identityVerificationHubV2Address).setVerificationConfigV2(verificationConfig);
     }
+
     /**
      * @notice Implementation of customVerificationHook for testing
      * @dev This function is called by onVerificationSuccess after hub address validation
@@ -59,14 +60,6 @@ contract ProofOfHuman is SelfVerificationRoot {
         lastUserAddress = address(uint160(output.userIdentifier));
 
         emit VerificationCompleted(output, userData);
-    }
-
-    /**
-     * @notice Expose the internal _setScope function for testing
-     * @param newScope The new scope value to set
-     */
-    function setScope(uint256 newScope) external {
-        _setScope(newScope);
     }
 
     function setConfigId(bytes32 configId) external {
