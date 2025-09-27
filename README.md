@@ -85,7 +85,10 @@ cp .env.example .env
 Edit `.env`:
 ```bash
 # Your deployed contract address from Step 3
-NEXT_PUBLIC_SELF_ENDPOINT=0xYourContractAddress
+# notice that the address should be lowercase
+NEXT_PUBLIC_SELF_ENDPOINT=0xyour_contract_address
+
+
 
 # App configuration
 NEXT_PUBLIC_SELF_APP_NAME="Self Workshop"
