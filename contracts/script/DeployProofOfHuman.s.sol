@@ -17,10 +17,11 @@ contract DeployProofOfHuman is BaseScript {
     /// @return proofOfHuman The deployed ProofOfHuman contract instance
     /// @dev Requires the following environment variables:
     ///      - IDENTITY_VERIFICATION_HUB_ADDRESS: Address of the Self Protocol verification hub
-    ///      - PLACEHOLDER_SCOPE: Placeholder scope value (defaults to 1)
+    ///      - SCOPE_SEED: Scope seed value (defaults to "self-workshop")
 
     function run() public broadcast returns (ProofOfHuman proofOfHuman) {
         address hubAddress = vm.envAddress("IDENTITY_VERIFICATION_HUB_ADDRESS");
+        string memory scopeSeed = vm.envString("SCOPE_SEED");
         string[] memory forbiddenCountries = new string[](1);
         
         // Make sure this is the same as frontend config
@@ -31,8 +32,8 @@ contract DeployProofOfHuman is BaseScript {
             ofacEnabled: false
         });
 
-        // Deploy the contract using standard deployment with placeholder scope
-        proofOfHuman = new ProofOfHuman(hubAddress, "test-scope", verificationConfig);
+        // Deploy the contract using SCOPE_SEED from environment
+        proofOfHuman = new ProofOfHuman(hubAddress, scopeSeed, verificationConfig);
 
         // Log deployment information
         console.log("ProofOfHuman deployed to:", address(proofOfHuman));
@@ -43,6 +44,6 @@ contract DeployProofOfHuman is BaseScript {
         if (address(proofOfHuman) == address(0)) revert DeploymentFailed();
 
         console.log("Deployment verification completed successfully!");
-        console.log("Next step: Calculate actual scope using deployed address and call setScope()");
+        console.log("Scope automatically generated from SCOPE_SEED:", scopeSeed);
     }
 }

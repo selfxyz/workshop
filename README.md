@@ -69,8 +69,7 @@ chmod +x script/deploy-proof-of-human.sh
 
 The script will:
 - ✅ Build contracts with Foundry
-- ✅ Deploy ProofOfHuman contract  
-- ✅ Calculate and set scope using deployed address
+- ✅ Deploy ProofOfHuman contract
 - ✅ Verify contract on CeloScan
 - ✅ Display deployment summary
 

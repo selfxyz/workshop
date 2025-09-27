@@ -42,7 +42,7 @@ for var in "${REQUIRED_VARS[@]}"; do
 done
 
 # Set defaults for optional variables
-PLACEHOLDER_SCOPE=${PLACEHOLDER_SCOPE:-1}
+SCOPE_SEED=${SCOPE_SEED:-"self-workshop"}
 NETWORK=${NETWORK:-"celo-sepolia"}
 
 # Network configuration
@@ -99,11 +99,12 @@ if [ $? -ne 0 ]; then
 fi
 print_success "Contract compilation successful!"
 
-# Export hub address for Solidity script
+# Export environment variables for Solidity script
 export IDENTITY_VERIFICATION_HUB_ADDRESS
+export SCOPE_SEED
 
 # Deploy contract
-print_info "Deploying ProofOfHuman contract with placeholder scope..."
+print_info "Deploying ProofOfHuman contract with scope seed: $SCOPE_SEED"
 
 DEPLOY_CMD="forge script script/DeployProofOfHuman.s.sol:DeployProofOfHuman --rpc-url $RPC_URL --private-key $PRIVATE_KEY --broadcast"
 
@@ -152,11 +153,11 @@ if [ -n "$CELOSCAN_API_KEY" ]; then
     esac
     
     # Encode constructor arguments for verification
-    # Constructor: (address,uint256,(uint256,string[],bool))
+    # Constructor: (address,string,(uint256,string[],bool))
     # verificationConfig struct: {olderThan: 18, forbiddenCountries: ["USA"], ofacEnabled: false}
-    CONSTRUCTOR_ARGS=$(cast abi-encode "constructor(address,uint256,(uint256,string[],bool))" \
+    CONSTRUCTOR_ARGS=$(cast abi-encode "constructor(address,string,(uint256,string[],bool))" \
         $IDENTITY_VERIFICATION_HUB_ADDRESS \
-        $PLACEHOLDER_SCOPE \
+        "$SCOPE_SEED" \
         "(18,[\"USA\"],false)")
     
     print_info "Constructor args: $CONSTRUCTOR_ARGS"
@@ -190,18 +191,10 @@ echo "| Contract Address | $CONTRACT_ADDRESS |"
 echo "| Hub Address | $IDENTITY_VERIFICATION_HUB_ADDRESS |"
 echo "| RPC URL | $RPC_URL |"
 echo "| Block Explorer | $BLOCK_EXPLORER_URL |"
-echo "| Placeholder Scope | $PLACEHOLDER_SCOPE |"
+echo "| Scope Seed | $SCOPE_SEED |"
 echo "| Verification Config | olderThan: 18, forbiddenCountries: [USA], ofacEnabled: false |"
-if [ -n "$SCOPE_VALUE" ]; then
-    echo "| Scope Value | $SCOPE_VALUE |"
-fi
 echo
 print_success "✅ Deployment Complete"
-if [ -n "$SCOPE_SEED" ]; then
-    echo "1. ✅ Contract deployed with placeholder scope"
-    echo "2. ✅ Actual scope calculated from deployed address + scope seed"
-    echo "3. ✅ Scope value set on deployed contract automatically"
-else
-    echo "1. ✅ Contract deployed with placeholder scope"
-    echo "2. ⚠️  Scope calculation skipped (no SCOPE_SEED provided)"
-fi
+echo "1. ✅ Contract deployed successfully"
+echo "2. ✅ Scope generated from SCOPE_SEED: $SCOPE_SEED"
+echo "3. ✅ Contract ready for verification flows"
