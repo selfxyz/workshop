@@ -35,7 +35,7 @@ export default function Home() {
         userId: userId,
         endpointType: "staging_celo",
         userIdType: "hex", // use 'hex' for ethereum address or 'uuid' for uuidv4
-        userDefinedData: "Hello Eth Delhi!!!",
+        userDefinedData: "Hello Eth Buenos Aires!!!",
         disclosures: {
         // what you want to verify from users' identity
           minimumAge: 18,
