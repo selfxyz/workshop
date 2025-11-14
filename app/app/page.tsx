@@ -6,8 +6,8 @@ import {
   SelfQRcodeWrapper,
   SelfAppBuilder,
   type SelfApp,
-  countries, 
   getUniversalLink,
+  countries,
 } from "@selfxyz/qrcode";
 import { ethers } from "ethers";
 
@@ -19,6 +19,7 @@ export default function Home() {
   const [selfApp, setSelfApp] = useState<SelfApp | null>(null);
   const [universalLink, setUniversalLink] = useState("");
   const [userId] = useState(ethers.ZeroAddress);
+  
   // Use useMemo to cache the array to avoid creating a new array on each render
   const excludedCountries = useMemo(() => [countries.UNITED_STATES], []);
 
@@ -33,12 +34,12 @@ export default function Home() {
         logoBase64:
           "https://i.postimg.cc/mrmVf9hm/self.png", // url of a png image, base64 is accepted but not recommended
         userId: userId,
-        endpointType: "staging_celo",
+        endpointType: "staging_https",
           // [Onchain Verification] "celo" for mainnet smart contract ,
           // [Onchain Verification] "staging_celo" for testnet smart contract,
           // [Offchain Verification] "https" mainnet https endpoint,
           // [Offchain Verification] "staging_https" for testnet https endpoint
-        userIdType: "hex", // use 'hex' for ethereum address or 'uuid' for uuidv4
+        userIdType: "hex", // must match backend userIdentifierType
         userDefinedData: "Hola Buenos Aires!!!",
         
         // [DEEPLINK CALLBACK] Uncomment to automatically redirect user to your app after verification
@@ -66,7 +67,7 @@ export default function Home() {
     } catch (error) {
       console.error("Failed to initialize Self app:", error);
     }
-  }, [excludedCountries, userId]);
+  }, [excludedCountries]);
 
   const displayToast = (message: string) => {
     setToastMessage(message);
