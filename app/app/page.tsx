@@ -40,6 +40,10 @@ export default function Home() {
           // [Offchain Verification] "staging_https" for testnet https endpoint
         userIdType: "hex", // use 'hex' for ethereum address or 'uuid' for uuidv4
         userDefinedData: "Hola Buenos Aires!!!",
+        
+        // [DEEPLINK CALLBACK] Uncomment to automatically redirect user to your app after verification
+        //deeplinkCallback: `your-app-deeplink-url`,
+        
         disclosures: { 
           // What you want to verify from users identity:
           minimumAge: 18,
