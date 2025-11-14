@@ -73,7 +73,7 @@ The script will:
 - ✅ Verify contract on CeloScan
 - ✅ Display deployment summary
 
-### Step 4: Frontend Configuration
+### Step 3: Frontend Configuration
 
 Configure the frontend:
 
@@ -84,15 +84,13 @@ cp .env.example .env
 
 Edit `.env`:
 ```bash
-# Your deployed contract address from Step 3
-# notice that the address should be lowercase
+# Your deployed contract address from Step 2
+# IMPORTANT: address should be lowercase
 NEXT_PUBLIC_SELF_ENDPOINT=0xyour_contract_address
-
-
 
 # App configuration
 NEXT_PUBLIC_SELF_APP_NAME="Self Workshop"
-NEXT_PUBLIC_SELF_SCOPE="self-workshop"
+NEXT_PUBLIC_SELF_SCOPE_SEED="self-workshop"
 ```
 
 ### Step 4: Start Development
@@ -111,65 +109,80 @@ Visit `http://localhost:3000` to see your verification application!
 
 ### Frontend SDK Configuration
 
-The Self SDK is configured in your React components:
+The Self SDK is configured in your React components (`app/app/page.tsx`):
 
 ```javascript
-import { SelfAppBuilder } from '@selfxyz/core';
+import { SelfAppBuilder, countries } from '@selfxyz/qrcode';
 
-const selfApp = new SelfAppBuilder({
-    // Contract integration settings
-    endpoint: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
-    endpointType: "staging_celo",  // Use "celo" for mainnet
-    userIdType: "hex",             // For wallet addresses
+const app = new SelfAppBuilder({
     version: 2,                    // Always use V2
+    appName: process.env.NEXT_PUBLIC_SELF_APP_NAME,
+    scope: process.env.NEXT_PUBLIC_SELF_SCOPE_SEED,
+    endpoint: process.env.NEXT_PUBLIC_SELF_ENDPOINT,  // Your contract address (lowercase)
+    logoBase64: "https://i.postimg.cc/mrmVf9hm/self.png", // Logo URL or base64
+    userId: userId,                // User's wallet address or identifier
+    endpointType: "staging_celo",  // "staging_celo" for testnet, "celo" for mainnet
+    userIdType: "hex",             // "hex" for Ethereum addresses, "uuid" for UUIDs
+    userDefinedData: "Hola Buenos Aires!!!",  // Optional custom data
     
-    // App details
-    appName: "Self Workshop",
-    scope: "self-workshop",
-    userId: userWalletAddress,
-
     disclosures: {
         // Verification requirements (must match your contract config)
         minimumAge: 18,
-        excludedCountries: ["USA"],  // 3-letter country codes
-        ofac: false,                 // OFAC compliance checking
-        // disclosures
-        name: true,                  // Request name disclosure
-        nationality: true,           // Request nationality disclosure
-        gender: true,                // Request gender disclosure
-        date_of_birth: true,         // Request date of birth disclosure
-        passport_number: true,       // Request passport number disclosure
-        expiry_date: true,           // Request expiry date disclosure
+        excludedCountries: [countries.UNITED_STATES],  // Use country constants
+        // ofac: true,               // Optional: OFAC compliance checking
+        
+        // Optional disclosures (uncomment to request):
+        // name: true,
+        // issuing_state: true,
+        // nationality: true,
+        // date_of_birth: true,
+        // passport_number: true,
+        // gender: true,
+        // expiry_date: true,
     }
 }).build();
 ```
 
 ### Smart Contract Configuration
 
-Your contract extends `SelfVerificationRoot`:
+Your contract extends `SelfVerificationRoot` (`contracts/src/ProofOfHuman.sol`):
 
 ```solidity
 contract ProofOfHuman is SelfVerificationRoot {
-    mapping(address => bool) public verifiedHumans;
+    // Verification result storage
+    bool public verificationSuccessful;
+    address public lastUserAddress;
     bytes32 public verificationConfigId;
     
     constructor(
-        address _hubAddress,
-        uint256 _scope,
-        bytes32 _verificationConfigId
-    ) SelfVerificationRoot(_hubAddress, _scope) {
-        verificationConfigId = _verificationConfigId;
+        address identityVerificationHubV2Address,
+        string memory scopeSeed,  // Seed used to generate scope
+        SelfUtils.UnformattedVerificationConfigV2 memory _verificationConfig
+    ) SelfVerificationRoot(identityVerificationHubV2Address, scopeSeed) {
+        // Format and set verification config
+        verificationConfig = SelfUtils.formatVerificationConfigV2(_verificationConfig);
+        verificationConfigId = IIdentityVerificationHubV2(identityVerificationHubV2Address)
+            .setVerificationConfigV2(verificationConfig);
     }
     
     function customVerificationHook(
         ISelfVerificationRoot.GenericDiscloseOutputV2 memory output,
         bytes memory userData
     ) internal override {
-        // Mark user as verified
-        address userAddress = address(uint160(output.userIdentifier));
-        verifiedHumans[userAddress] = true;
+        // Store verification results
+        verificationSuccessful = true;
+        lastOutput = output;
+        lastUserAddress = address(uint160(output.userIdentifier));
         
         emit VerificationCompleted(output, userData);
+    }
+    
+    function getConfigId(
+        bytes32, /* destinationChainId */
+        bytes32, /* userIdentifier */
+        bytes memory /* userDefinedData */
+    ) public view override returns (bytes32) {
+        return verificationConfigId;
     }
 }
 ```
@@ -192,10 +205,9 @@ contract ProofOfHuman is SelfVerificationRoot {
 
 ### Getting Help
 
-- 📱 **Telegram Community**: [Self Protocol Support](https://t.me/selfprotocol)
+- 📱 **Telegram Community**: [Self Protocol Builders Group](https://t.me/selfprotocolbuilder)
 - 📖 **Documentation**: [docs.self.xyz](https://docs.self.xyz)
 - 🎥 **Workshop Video**: [ETHGlobal Cannes](https://www.youtube.com/live/0Jg1o9BFUBs)
-- 💬 **GitHub Issues**: Report workshop-specific issues
 
 ---
 
@@ -203,23 +215,35 @@ contract ProofOfHuman is SelfVerificationRoot {
 
 ```
 workshop/
-├── app/
+├── app/                                 # Next.js frontend application
 │   ├── app/
-│   │   ├── verified/page.tsx        # Success page
-│   │   ├── page.tsx                 # Main QR code page
-│   │   └── layout.tsx               # Root layout
-│   └── components/                  # React components
-├── contracts/
-│   ├── src/ProofOfHuman.sol         # Main contract
+│   │   ├── page.tsx                     # Main QR code page with Self SDK integration
+│   │   ├── layout.tsx                   # Root layout with metadata
+│   │   ├── globals.css                  # Global styles
+│   │   └── verified/
+│   │       ├── page.tsx                 # Success page after verification
+│   │       └── page.module.css          # Success page styles
+│   ├── .env.example                     # Frontend environment template
+│   ├── package.json                     # Frontend dependencies
+│   ├── tailwind.config.ts               # Tailwind CSS configuration
+│   └── README.md                        # Frontend documentation
+│
+├── contracts/                           # Foundry smart contracts
+│   ├── src/
+│   │   └── ProofOfHuman.sol             # Main verification contract
 │   ├── script/
-│   │   ├── Deploy*.s.sol            # Deployment scripts
-│   │   └── deploy-proof-of-human.sh # Deployment automation
-│   ├── .env.example                 # Contract environment template
-│   ├── foundry.toml                 # Foundry configuration
-│   └── DEPLOYMENT.md                # Detailed deployment guide
-├── public/                          # Static assets
-├── .env.example                     # Frontend environment template
-└── README.md                        # This file
+│   │   ├── Base.s.sol                   # Base script utilities
+│   │   ├── DeployProofOfHuman.s.sol     # Foundry deployment script
+│   │   └── deploy-proof-of-human.sh     # Automated deployment script
+│   ├── lib/                             # Dependencies
+│   │   ├── forge-std/                   # Foundry standard library
+│   │   └── openzeppelin-contracts/      # OpenZeppelin contracts
+│   ├── .env.example                     # Contract environment template
+│   ├── foundry.toml                     # Foundry configuration
+│   ├── package.json                     # Contract dependencies
+│   └── README.md                        # Contract documentation
+│
+└── README.md                            # This file (workshop guide)
 ```
 
 ---
@@ -230,15 +254,8 @@ workshop/
 - [Self Protocol Docs](https://docs.self.xyz/) - Complete protocol documentation
 - [Contract Integration Guide](https://docs.self.xyz/contract-integration/basic-integration) - Smart contract specifics
 - [Frontend SDK Reference](https://docs.self.xyz/sdk-reference/selfappbuilder) - Frontend integration details
-- [Verification Disclosures](https://docs.self.xyz/use-self/disclosures) - Available verification options
+- [Disclosure Proofs](https://docs.self.xyz/use-self/disclosures) - Available verification options
 
-### Tools & Utilities
-- [tools.self.xyz](https://tools.self.xyz) - Configuration and deployment tools
-- [Self Mobile Apps](https://self.xyz/download) - iOS and Android apps
-- [Celo Documentation](https://docs.celo.org/) - Blockchain platform docs
-- [Foundry Documentation](https://book.getfoundry.sh/) - Smart contract framework
-
-### Community & Support
-- [Self Protocol Telegram](https://t.me/selfprotocol) - Community support
-- [GitHub Repository](https://github.com/selfxyz) - Source code and issues
-- [ETHGlobal Workshop](https://www.youtube.com/live/0Jg1o9BFUBs) - Video tutorial
+### Self App
+- [Self on iOS](https://apps.apple.com/us/app/self-zk-passport-identity/id6478563710) - iOS App
+- [Self on Android](https://play.google.com/store/apps/details?id=com.proofofpassportapp) - Android App

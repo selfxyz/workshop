@@ -8,18 +8,20 @@ import { SelfUtils } from "@selfxyz/contracts/contracts/libraries/SelfUtils.sol"
 import { IIdentityVerificationHubV2 } from "@selfxyz/contracts/contracts/interfaces/IIdentityVerificationHubV2.sol";
 
 /**
- * @title TestSelfVerificationRoot
- * @notice Test implementation of SelfVerificationRoot for testing purposes
- * @dev This contract provides a concrete implementation of the abstract SelfVerificationRoot
+ * @title ProofOfHuman
+ * @notice Demo implementation of SelfVerificationRoot for Proof of Human verification
+ * @dev This contract provides a simple working implementation of the abstract SelfVerificationRoot
  */
 contract ProofOfHuman is SelfVerificationRoot {
-    // Storage for testing purposes
-    bool public verificationSuccessful;
+    // Verification result storage
     ISelfVerificationRoot.GenericDiscloseOutputV2 public lastOutput;
+    bool public verificationSuccessful;
     bytes public lastUserData;
+    address public lastUserAddress;
+
+    // Verification config storage
     SelfStructs.VerificationConfigV2 public verificationConfig;
     bytes32 public verificationConfigId;
-    address public lastUserAddress;
 
     // Events for testing
     event VerificationCompleted(ISelfVerificationRoot.GenericDiscloseOutputV2 output, bytes userData);
@@ -27,13 +29,15 @@ contract ProofOfHuman is SelfVerificationRoot {
     /**
      * @notice Constructor for the test contract
      * @param identityVerificationHubV2Address The address of the Identity Verification Hub V2
+     * @param scopeSeed The scope seed that is used to create the scope of the contract
+     * @param _verificationConfig The verification configuration that will be used to process the proof in the VerificationHub
      */
     constructor(
         address identityVerificationHubV2Address,
-        string memory scope, 
+        string memory scopeSeed, 
         SelfUtils.UnformattedVerificationConfigV2 memory _verificationConfig
     )
-        SelfVerificationRoot(identityVerificationHubV2Address, scope)
+        SelfVerificationRoot(identityVerificationHubV2Address, scopeSeed)
     {
         verificationConfig = SelfUtils.formatVerificationConfigV2(_verificationConfig);
         verificationConfigId =
@@ -41,7 +45,7 @@ contract ProofOfHuman is SelfVerificationRoot {
     }
 
     /**
-     * @notice Implementation of customVerificationHook for testing
+     * @notice Implementation of customVerificationHook from SelfVerificationRoot
      * @dev This function is called by onVerificationSuccess after hub address validation
      * @param output The verification output from the hub
      * @param userData The user data passed through verification
@@ -62,10 +66,14 @@ contract ProofOfHuman is SelfVerificationRoot {
         emit VerificationCompleted(output, userData);
     }
 
-    function setConfigId(bytes32 configId) external {
-        verificationConfigId = configId;
-    }
-
+    /**
+     * @notice Implementation of getConfigId from SelfVerificationRoot
+     * @dev Returns the verification config ID for this contract.
+     *      - destinationChainId: The destination chain ID (placeholder for future crosschain use)
+     *      - userIdentifier: The user identifier (passed in from the frontends userId field)
+     *      - userDefinedData: The user defined data (passed in from the frontends userDefinedData field)
+     * @return The verification configuration ID
+     */
     function getConfigId(
         bytes32, /* destinationChainId */
         bytes32, /* userIdentifier */

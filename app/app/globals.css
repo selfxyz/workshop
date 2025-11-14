@@ -7,8 +7,6 @@
   --foreground: #171717;
 }
 
-/* Removed automatic dark mode - keeping light theme consistent */
-
 body {
   color: var(--foreground);
   background: var(--background);

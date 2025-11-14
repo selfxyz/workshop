@@ -18,6 +18,7 @@ contract DeployProofOfHuman is BaseScript {
     /// @dev Requires the following environment variables:
     ///      - IDENTITY_VERIFICATION_HUB_ADDRESS: Address of the Self Protocol verification hub
     ///      - SCOPE_SEED: Scope seed value (defaults to "self-workshop")
+    ///      - VERIFICATION_CONFIG: Verification configuration that will be used to process the proof in the VerificationHub
 
     function run() public broadcast returns (ProofOfHuman proofOfHuman) {
         address hubAddress = vm.envAddress("IDENTITY_VERIFICATION_HUB_ADDRESS");
