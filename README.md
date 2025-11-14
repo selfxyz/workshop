@@ -7,7 +7,7 @@ Learn to build privacy-preserving identity verification with [Self Protocol](htt
 ## Prerequisites
 
 - Node.js 20+
-- [Self Mobile App](https://self.xyz/download) (iOS/Android)
+- [Self Mobile App](https://self.xyz)
 - Celo wallet with testnet funds
 
 ---
