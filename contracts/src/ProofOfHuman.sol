@@ -63,6 +63,10 @@ contract ProofOfHuman is SelfVerificationRoot {
         lastUserData = userData;
         lastUserAddress = address(uint160(output.userIdentifier));
 
+        // If you wanted to get data from a disclosure, you can do it like this:
+        //  issuingState = output.issuingState;
+        // Make sure to have the disclosure requested in the SelfAppBuilder component in page.tsx
+
         emit VerificationCompleted(output, userData);
     }
 
