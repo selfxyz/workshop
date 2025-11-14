@@ -4,6 +4,8 @@ Learn to build privacy-preserving identity verification with [Self Protocol](htt
 
 > 📺 **New to Self?** Watch the [ETHGlobal Workshop](https://www.youtube.com/live/0Jg1o9BFUBs?si=4g0okIn91QMIzew-) first.
 
+This main branch of the repo contains an example of onchain verification. If you would like to see an example with offchain/backend verification, please check out the 'backend-verification' branch.
+
 ## Prerequisites
 
 - Node.js 20+

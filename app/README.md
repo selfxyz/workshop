@@ -84,7 +84,3 @@ The application can be customized by modifying the following files:
 - `src/app/page.tsx`: Frontend Self Protocol integration
   - Customize the identity requirements in the `disclosures` section
   - Modify the success callback behavior
-
-- `src/app/api/verify/route.ts`: Backend verification handler
-  - Customize verification parameters
-  - Modify the response handling logic
