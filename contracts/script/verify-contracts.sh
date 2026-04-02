@@ -35,9 +35,9 @@ for var in "${REQUIRED_VARS[@]}"; do
     fi
 done
 
-# Constants
-CELO_HUB_ADDRESS="0xe57F4773bd9c9d8b6Cd70431117d353298B9f5BF"
-LZ_ENDPOINT_ADDRESS="0x1a44076050125825900e736c501f859c50fE728c"
+# Use env vars with mainnet defaults (matching deploy-oapp-cross-chain.sh)
+IDENTITY_VERIFICATION_HUB_ADDRESS=${IDENTITY_VERIFICATION_HUB_ADDRESS:-"0xe57F4773bd9c9d8b6Cd70431117d353298B9f5BF"}
+LAYERZERO_ENDPOINT_ADDRESS=${LAYERZERO_ENDPOINT_ADDRESS:-"0x1a44076050125825900e736c501f859c50fE728c"}
 PLACEHOLDER_SCOPE=${PLACEHOLDER_SCOPE:-1}
 
 # Get deployer address
@@ -80,15 +80,15 @@ print_info "Encoding constructor arguments..."
 
 CELO_CONSTRUCTOR_ARGS=$(cast abi-encode \
     "constructor(address,uint256,bytes32,address,address)" \
-    "$CELO_HUB_ADDRESS" \
+    "$IDENTITY_VERIFICATION_HUB_ADDRESS" \
     "$PLACEHOLDER_SCOPE" \
     "$VERIFICATION_CONFIG_ID" \
-    "$LZ_ENDPOINT_ADDRESS" \
+    "$LAYERZERO_ENDPOINT_ADDRESS" \
     "$DEPLOYER")
 
 BASE_CONSTRUCTOR_ARGS=$(cast abi-encode \
     "constructor(address,address)" \
-    "$LZ_ENDPOINT_ADDRESS" \
+    "$LAYERZERO_ENDPOINT_ADDRESS" \
     "$DEPLOYER")
 
 print_info "Starting manual contract verification..."
