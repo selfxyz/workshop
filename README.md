@@ -1,3 +1,6 @@
+> [!WARNING]
+> **This boilerplate is deprecated.** It demonstrates the legacy open-source Self Pass SDK (`@selfxyz/core` + `@selfxyz/qrcode`), which must not be used for new integrations. All new integrations use **[Self Enterprise](https://docs.self.xyz/docs/self-enterprise/get-started/quickstart/)** (`@selfxyz/enterprise-sdk`): configure a flow in the [dashboard](https://dashboard.self.xyz), create a session from your backend, and redirect the user to the hosted `verificationUrl` — no QR rendering, no self-hosted verifier. Already built on this repo? Follow the [migration guide](https://docs.self.xyz/docs/self-enterprise/migration/from-self-pass-sdk/).
+
 # Self Protocol Boilerplate Example
 
 Learn to build privacy-preserving identity verification with [Self Protocol](https://self.xyz/) - from frontend QR codes to smart contract attestations on Celo.
